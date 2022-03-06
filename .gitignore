@@ -109,6 +109,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+MMM_Web_App/
 
 # Spyder project settings
 .spyderproject
