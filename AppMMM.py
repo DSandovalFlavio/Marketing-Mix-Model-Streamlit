@@ -37,7 +37,7 @@ def main():
                 ### *"La mitad del dinero que me gasto en publicidad es un desperdicio: el problema es que no sé qué mitad es"*
                 John Wanamaker
 
-                ## ¿Que es el Marketing Mix Model (MMM)?
+                ## ¿Qué es el Marketing Mix Model (MMM)?
                 El marketing mix modeling es un tipo de modelado que permite conocer 
                 la relación entre cada canal de marketing en los que se invierte dentro 
                 de una empresa y sus respectivos resultados (ventas)
@@ -47,7 +47,7 @@ def main():
                 inversión y ventas por canal. Además, permite predecir escenarios futuros y 
                 el comportamiento del ROI.
 
-                **¿Que se obtiene con el modelado?**
+                **¿Qué se obtiene con el modelado?**
                 
                 Se espera obtener curvas de saturación por cada canal disponible en el 
                 conjunto de datos elegido, para conocer qué tipo de patrón de inversión es el más 
@@ -81,7 +81,7 @@ def main():
                 """)
     st.markdown("""
                 ---
-                #### ¿Como a inviertido la marca a lo largo de los años?
+                #### ¿Cómo a inviertido la marca a lo largo de los años?
                 """)
     # Data para graficar
     data_CF = data.copy()
@@ -292,7 +292,7 @@ def main():
     for medio in amedios3:
         atribucion_investment_medio[medio+'_ROI'] = (atribucion_investment_medio[medio+'_revenue'] - atribucion_investment_medio[medio+'_investment'])/atribucion_investment_medio[medio+'_investment']
     
-    amedios4 = ['OpenTV', 'Print', 'Facebook', 'Google', 'PayTV', 'Email', 'Radio']
+    amedios4 = ['Print', 'OpenTV', 'Facebook', 'Google', 'PayTV', 'Email', 'Radio']
     medio_select = st.selectbox('Selecciona un medio: ', amedios4)
     atribucion_investment_medio = atribucion_investment_medio[atribucion_investment_medio[medio_select+'_investment'] != 0]
     roi_plot = make_subplots(specs=[[{"secondary_y": True}]])
@@ -300,13 +300,13 @@ def main():
     roi_plot.add_trace(go.Scatter(  x=atribucion_investment_medio[medio_select+'_investment'],
                                     y=atribucion_investment_medio[medio_select+'_revenue'],
                                     mode='markers',
-                                    name='Revenue vs Investment'),
+                                    name='Investment vs Revenue'),
                         secondary_y=False)
     # revenue vs ROI
     roi_plot.add_trace(go.Scatter(  x=atribucion_investment_medio[medio_select+'_investment'],
                                     y=atribucion_investment_medio[medio_select+'_ROI'],
                                     mode='markers',
-                                    name='Revenue vs ROI'),
+                                    name='Investment vs ROI'),
                         secondary_y=True)
     roi_plot.update_layout( #title_text=medio_select+' ROI',
                             yaxis_title='Revenue',
