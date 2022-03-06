@@ -308,11 +308,63 @@ def main():
                                     mode='markers',
                                     name='Investment vs ROI'),
                         secondary_y=True)
-    roi_plot.update_layout( #title_text=medio_select+' ROI',
-                            yaxis_title='Revenue',
+    roi_plot.add_annotation(y = atribucion_investment_medio[medio_select+'_revenue'].max(),
+                            x = atribucion_investment_medio[medio_select+'_investment'].min(),
+                            text = 'ROI = '+str(round(atribucion_investment_medio[medio_select+'_ROI'].max(),2))+'%' + '<br>' + 'Investment = $'+str(round(atribucion_investment_medio[medio_select+'_investment'].min(),2)),
+                            showarrow = True,
+                            arrowhead = 1,
+                            ax = -75,
+                            ay = 0)
+    roi_plot.add_annotation(y = atribucion_investment_medio[medio_select+'_revenue'].min(),
+                            x = atribucion_investment_medio[medio_select+'_investment'].max(),
+                            text = 'ROI = '+str(round(atribucion_investment_medio[medio_select+'_ROI'].min(),2))+'%' + '<br>' + 'Investment = $'+str(round(atribucion_investment_medio[medio_select+'_investment'].max(),2)),
+                            showarrow = True,
+                            arrowhead = 1,
+                            ax = 75,
+                            ay = 0)
+    roi_plot.add_annotation(y = atribucion_investment_medio[medio_select+'_revenue'].min(),
+                            x = atribucion_investment_medio[medio_select+'_investment'].min(),
+                            text = 'ROI = '+str(round(atribucion_investment_medio[medio_select+'_ROI'].max(),2))+'%' + '<br>' + 'Revenue = $'+str(round(atribucion_investment_medio[medio_select+'_revenue'].min(),2)),
+                            showarrow = True,
+                            arrowhead = 1,
+                            ax = -75,
+                            ay = 0)
+    roi_plot.add_annotation(y = atribucion_investment_medio[medio_select+'_revenue'].max(),
+                            x = atribucion_investment_medio[medio_select+'_investment'].max(),
+                            text = 'ROI = '+str(round(atribucion_investment_medio[medio_select+'_ROI'].min(),2))+'%' + '<br>' + 'Revenue = $'+str(round(atribucion_investment_medio[medio_select+'_revenue'].max(),2)) ,
+                            showarrow = True,
+                            arrowhead = 1,
+                            ax = 75,
+                            ay = 0)
+    roi_plot.add_annotation(y = atribucion_investment_medio[medio_select+'_revenue'].mean(),
+                            x = atribucion_investment_medio[medio_select+'_investment'].mean(),
+                            text = 'ROI = '+str(round(atribucion_investment_medio[medio_select+'_ROI'].mean(),2))+'%' + '<br>' + 'Revenue = $'+str(round(atribucion_investment_medio[medio_select+'_revenue'].mean(),2)) + '<br>' + 'Investment = $'+str(round(atribucion_investment_medio[medio_select+'_investment'].mean(),2)),
+                            showarrow = True,
+                            arrowhead = 1,
+                            ax = 150,
+                            ay = 0)
+    roi_plot.update_layout( legend = dict(
+                                        orientation="h",
+                                        yanchor="bottom",
+                                        y = 1,
+                                        xanchor="right",
+                                        x = 0.75
+                                        )
+                            )
+    roi_plot.update_layout( yaxis_title='Revenue',
                             yaxis2_title='ROI',
                             xaxis_title='Investment')
     st.plotly_chart(roi_plot)
+    st.markdown("""
+                En estos Graficos podemos observar el impacto de la inversion saturada con respecto al ROI que esta genera,
+                del lado izquierdo se observa que en la invercion mas baja genera un ROI mas alto, 
+                mientras que en la inversion mas alta genera un ROI mas bajo como se aprecia en el lado derecho.
+                """)
+    st.markdown("""
+                ### Concluciones
+                - Se afirma que los presupuestos de Radio, Print, Email y Open TV todavía tienen un impacto representativo en las ventas por no estar muy saturados.
+                - Pese a que las inversiones en TV abierta se encuentran casi saturadas, siguen siendo inversiones que impactan a las ventas generadas en cada mes y año.
+                - El canal de TV de paga es el más saturado de todos los demás canales. Es conveniente ir reduciendo sus inversiones o cambiar la estrategia de publicaciones.""")
 
 if __name__ == '__main__':
     main()
