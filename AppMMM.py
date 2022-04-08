@@ -120,7 +120,7 @@ def main():
     st.markdown("""
                 - Se observa que la inversión en los meses de Junio y Octubre fueron las más altas.
                 - En Junio se hace hizo la mayor inversión 2020 y 2019. 
-                - Abril y Mayo del 2019 y 2018 fueron muy parecidas inversión.
+                - Abril y Mayo del 2019 y 2018 fueron muy parecidas las inversiónes.
                 - Noviembre normalmente baja la inversión para subir en Diciembre.
                 """)
 
@@ -153,7 +153,37 @@ def main():
                         - El 77% de la inversión fue en los medios OpenTV, PayTV, Google y Radio.
                         - El 23% de la inversión fue en los medios impresos, email y Facebook.'''}
     st.markdown(inv_año[opcion_anio])
+
+    st.markdown("""
+                #### ¿Cómo a cambiado la inversión en cada medio a lo largo de los años?
+                """)
+    # Grafico de barras
+    # grafico de pie para el año seleccionado
     
+    data_CF_year_share = pd.DataFrame()
+    medios = ['Facebook', 'Print', 'Email', 'Radio', 'Google', 'PayTV', 'OpenTV']
+    for medio in medios:
+        data_CF_year_share[medio] =data_CF.groupby(['Año'])[medios].sum().apply(lambda x: round((x[medio]*100) / x.sum(axis=0),3), axis=1)
+    data_CF_year_share = data_CF_year_share.reset_index()
+    data_CF_year_share = pd.melt(data_CF_year_share,
+                                id_vars='Año',
+                                value_vars=medios,
+                                var_name='medios',
+                                value_name='% Participacion')
+    data_CF_year_share['Año'] = data_CF_year_share['Año'].astype(str)
+    plot_share = px.bar(data_CF_year_share.sort_values(by='Año'),
+                x = 'medios',
+                y = '% Participacion',
+                color='Año',
+                barmode='group',
+                text='% Participacion')
+    st.plotly_chart(plot_share)
+    st.markdown("""
+                - La participaciòn de Facebook, Print, PayTV y Email a caido.
+                - Radio ha mantenido su participacion en los 2 ultimos años. 
+                - Google y OpenTV ha aumentado participacion en los ultimos 3 años.
+                """)
+
     st.markdown("""#### ¿Cómo se distribuye generalmente la inversión en los medios?""")
     list_metrics = ['mean', 'std', 'max', 'cv']
     opcion_metric = st.selectbox('Ordenar por: ', list_metrics)
@@ -177,6 +207,22 @@ def main():
                 - En promedio se invierten por lo menos 1000 USD en los medios Facebook, Print y Email.
                 - En promedio se invierten un poco más de 3000 USD en medios paytv, opentv, radio y google.
                 """)
+    
+    count_actividad = pd.DataFrame()
+    for medio in medios:
+        count_actividad[medio] = data_CF[medio].apply(lambda x: 1 if x > 0 else 0)
+    count_actividad = pd.melt(count_actividad,
+                            value_vars=medios,
+                            var_name='medios',
+                            value_name='Semanas')
+    count_actividad = count_actividad.groupby(['medios'])['Semanas'].sum().reset_index()
+    bar_activ = px.bar(count_actividad,
+        x='medios',
+        y='Semanas',
+        color='medios' ,
+        text='Semanas',
+        title='Numero de semanas que mantuvieron activa la inversion')
+    st.plotly_chart(bar_activ)
     
     medios = ['Print', 'Email', 'Radio', 'Facebook', 'Google', 'PayTV', 'OpenTV']
     opcion_metric = st.selectbox('Selecciona un medio: ', medios)
@@ -246,7 +292,33 @@ def main():
                 Por último graficaremos las curvas de retorno de inversión para cada medio, y el ROI para obtener los mejores montos de inversión.
         """)
     st.image('./Resources/Pipeline.png', width=800)
+
+    # Data best parameters
+    st.markdown("""#### ¿Que aprendemos con la aplicacion de Feature Engineering a las inversiones de cada medio? """)
+    best_params = pd.read_csv('./best_params.csv')
+    length_dur = px.bar(best_params.query('Parametro == "length"'),
+                        x = 'Medio',
+                        y = 'values',
+                        color = 'Medio')
+    st.plotly_chart(length_dur)
+    st.markdown("""
+                - El efecto de la publicidad en Print y Facebook dura 4 semanas
+                - El efecto de la publicidad de Radio y PayTV dura 3 semanas
+                - El efecto de la publicidad de Email y Google es inmediato
+                - El efecto de la publicidad de OpenTV dura 3 semanas
+                """)
     
+    strength_dur = px.bar(best_params.query('Parametro == "strength"'),
+                        x = 'Medio',
+                        y = 'values',
+                        color = 'Medio')
+    st.plotly_chart(strength_dur)
+    st.markdown("""
+                - El efecto de la publicidad en Print y PayTV se degrada en aprox 0.2 por semana
+                - El efecto de la publicidad de Radio y Facebook se degrada en 0.8 y 0.7 respectivamente por semana
+                - El efecto de la publicidad de OpenTV se degrada en 0.1 por semana
+                """)
+
     # Data con Features Engineering
     st.markdown("""#### ¿Cómo cambia la correlación entre las ventas y la inversión de cada medio con la implementación de Features Engineering?""")
     data_FE_raw = pd.read_csv('./DataSaturada.csv').set_index('Date')
@@ -330,14 +402,14 @@ def main():
                             ay = 0)
     roi_plot.add_annotation(y = atribucion_investment_medio[medio_select+'_revenue'].min(),
                             x = atribucion_investment_medio[medio_select+'_investment'].min(),
-                            text = 'ROI = '+str(round(atribucion_investment_medio[medio_select+'_ROI'].max(),2))+'%' + '<br>' + 'Revenue = $'+str(round(atribucion_investment_medio[medio_select+'_revenue'].min(),2)),
+                            text = 'Investment = $'+str(round(atribucion_investment_medio[medio_select+'_investment'].min(),2)) + '<br>' + 'Revenue = $'+str(round(atribucion_investment_medio[medio_select+'_revenue'].min(),2)),
                             showarrow = True,
                             arrowhead = 1,
                             ax = -75,
                             ay = 0)
     roi_plot.add_annotation(y = atribucion_investment_medio[medio_select+'_revenue'].max(),
                             x = atribucion_investment_medio[medio_select+'_investment'].max(),
-                            text = 'ROI = '+str(round(atribucion_investment_medio[medio_select+'_ROI'].min(),2))+'%' + '<br>' + 'Revenue = $'+str(round(atribucion_investment_medio[medio_select+'_revenue'].max(),2)) ,
+                            text = 'Investment = $'+str(round(atribucion_investment_medio[medio_select+'_investment'].max(),2))+ '<br>' + 'Revenue = $'+str(round(atribucion_investment_medio[medio_select+'_revenue'].max(),2)) ,
                             showarrow = True,
                             arrowhead = 1,
                             ax = 75,
