@@ -25,8 +25,7 @@ def cargar_datos():
 def main():
     # Titulo de la aplicacion
     st.title("Marketing Mix Model (MMM)")
-    st.markdown("""By [@DSandovalFlavio](https://github.com/DSandovalFlavio) and
-                    [@Chesar832](https://github.com/Chesar832)""")
+    st.markdown("""By [@DSandovalFlavio](https://github.com/DSandovalFlavio)""")
     st.markdown("""
                 #### Links del proyecto
                 [GitHub](https://github.com/DSandovalFlavio/Proyect-Marketing-Mix-Modeling)
